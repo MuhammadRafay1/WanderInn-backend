@@ -5,46 +5,65 @@ const listingSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     description: {
       type: String,
-      required: true,
-    },
-    price: {
-      type: Number,
-      required: true,
+      required: true
     },
     location: {
       type: String,
       required: true,
-      index: true, 
+      index: true
+    },
+    price: {
+      type: Number,
+      required: true
+    },
+    rating: {
+      type: Number,
+      default: 0
+    },
+    reviews: {
+      type: Number,
+      default: 0
+    },
+    host: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    amenities: {
+      type: [String],
+      default: []
+    },
+    images: {
+      type: [String],
+      default: []
+    },
+    cancellationPolicy: {
+      type: String,
+      required: true
     },
     bedrooms: {
       type: Number,
-      required: true,
+      required: true
     },
     bathrooms: {
       type: Number,
-      required: true,
+      required: true
+    },
+    maxGuests: {
+      type: Number,
+      required: true
     },
     available: {
       type: Boolean,
-      default: true,
-    },
-    images: {
-      type: [String], // Array of image URLs
-      default: [],
-    },
-    owner: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to User model
-      required: true,
-    },
+      default: true
+    }
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 const Listing = mongoose.model("Listing", listingSchema);
-
 module.exports = Listing;

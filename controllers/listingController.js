@@ -7,26 +7,49 @@ const router = express.Router();
 
 const createListing = async (req, res) => {
     try {
-      const { title, description, price, location, images, bedrooms, bathrooms, available } = req.body;
-  
-      const newListing = new Listing({
-        title,
-        description,
-        price,
-        location,
-        images: images || [], // Default to empty array if no images provided
-        bedrooms,
-        bathrooms,
-        available: available !== undefined ? available : true, 
-        owner: req.user.id, // Associate with logged-in user
-      });
-  
-      const savedListing = await newListing.save();
-      res.status(201).json(savedListing);
+        if (!req.user) {
+            return res.status(401).json({ error: "Unauthorized: No user found" });
+        }
+
+        const {
+            title,
+            description,
+            location,
+            price,
+            rating,
+            reviews,
+            amenities,
+            images,
+            cancellationPolicy,
+            bedrooms,
+            bathrooms,
+            maxGuests
+        } = req.body;
+
+        const newListing = new Listing({
+            title,
+            description,
+            location,
+            price,
+            rating,
+            reviews,
+            amenities,
+            images,
+            cancellationPolicy,
+            bedrooms,
+            bathrooms,
+            maxGuests,
+            host: req.user.id // Automatically assign logged-in user as the host
+        });
+
+        const savedListing = await newListing.save();
+        await savedListing.populate("host", "name email response responseTime image"); // Fetch host details
+
+        res.status(201).json(savedListing);
     } catch (error) {
-      res.status(500).json({ error: "Failed to create listing", details: error.message });
+        res.status(500).json({ error: "Failed to create listing", details: error.message });
     }
-  };
+};
 
 
 const getListings = async (req, res) => {

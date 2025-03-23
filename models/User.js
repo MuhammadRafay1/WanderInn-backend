@@ -1,29 +1,47 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+      trim: true
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      trim: true,
+      lowercase: true
     },
     password: {
       type: String,
-      required: true,
+      required: true
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ["user", "host" , "admin"],
+      default: "guest"
     },
+    status: {
+      type: String,
+      enum: ["active", "inactive","suspended"],
+      default: "active"
+    },
+    properties: {
+      type: Number,
+      default: 0
+    },
+    bookings: {
+      type: Number,
+      default: 0
+    }
   },
   { timestamps: true }
 );
+
 
 
 UserSchema.methods.matchPassword = async function (enteredPassword) {
