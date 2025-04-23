@@ -6,7 +6,8 @@ const {
     updateListing, 
     deleteListing,
     approveListing,
-    rejectListing
+    rejectListing,
+    filterPropertiesByAmenities
 } = require("../controllers/listingController");
 const { protect, admin } = require("../middlewares/authMiddlewares");
 
@@ -24,5 +25,8 @@ router.delete("/:id", protect, deleteListing);
 // Admin-only routes for moderating listings
 router.patch("/:id/approve", protect, admin, approveListing);
 router.patch("/:id/reject", protect, admin, rejectListing);
+
+// Route for filtering properties by amenities
+router.get("/filter", filterPropertiesByAmenities);
 
 module.exports = router;

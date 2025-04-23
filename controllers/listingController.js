@@ -192,6 +192,37 @@ const rejectListing = async (req, res) => {
   }
 };
 
+const filterPropertiesByAmenities = async (req, res) => {
+  try {
+    const { amenities } = req.query;
+
+    console.log("Received amenities:", amenities); // Log the received amenities
+
+    if (!amenities || amenities.length === 0) {
+      return res.status(400).json({ error: "Please provide amenities to filter by." });
+    }
+
+    const amenitiesArray = Array.isArray(amenities) ? amenities : [amenities];
+    console.log("Parsed amenities array:", amenitiesArray); // Log the parsed amenities array
+
+    const listings = await Listing.find({
+      amenities: { $all: amenitiesArray },
+      status: "approved",
+    });
+
+    console.log("Fetched listings:", listings); // Log the fetched listings
+
+    if (listings.length === 0) {
+      return res.status(404).json({ message: "No Listings Found" });
+    }
+
+    res.status(200).json({ listings });
+  } catch (error) {
+    console.error("Error fetching listings:", error.message); // Log the error
+    res.status(500).json({ error: "Failed to fetch listing", details: error.message });
+  }
+};
+
 module.exports = { 
   createListing, 
   getListings, 
@@ -199,5 +230,6 @@ module.exports = {
   updateListing, 
   deleteListing, 
   approveListing, 
-  rejectListing 
+  rejectListing,
+  filterPropertiesByAmenities 
 };
