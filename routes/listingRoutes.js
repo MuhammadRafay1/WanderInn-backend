@@ -4,9 +4,11 @@ const {
     getListings, 
     getListingById, 
     updateListing, 
-    deleteListing 
+    deleteListing,
+    approveListing,
+    rejectListing
 } = require("../controllers/listingController");
-const { protect } = require("../middlewares/authMiddlewares");
+const { protect, admin } = require("../middlewares/authMiddlewares");
 
 const router = express.Router();
 
@@ -18,5 +20,9 @@ router.get("/:id", getListingById);
 router.post("/", protect, createListing); 
 router.put("/:id", protect, updateListing); 
 router.delete("/:id", protect, deleteListing); 
+
+// Admin-only routes for moderating listings
+router.patch("/:id/approve", protect, admin, approveListing);
+router.patch("/:id/reject", protect, admin, rejectListing);
 
 module.exports = router;

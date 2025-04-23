@@ -136,4 +136,68 @@ const deleteListing = async (req, res) => {
     }
 };
 
-module.exports = { createListing, getListings, getListingById, updateListing, deleteListing };
+const approveListing = async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    // Check if all required fields are present
+    const requiredFields = ["maxGuests", "cancellationPolicy", "host"];
+    for (const field of requiredFields) {
+      if (!listing[field]) {
+        return res.status(400).json({
+          error: `Cannot approve listing. Missing required field: ${field}`,
+        });
+      }
+    }
+
+    // Approve the listing
+    listing.status = "approved";
+    listing.rejectionReason = null; // Clear any previous rejection reason
+    await listing.save();
+
+    res.status(200).json({ message: "Listing approved successfully", listing });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to approve listing", details: error.message });
+  }
+};
+
+const rejectListing = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    if (!reason) {
+      return res.status(400).json({ error: "Rejection reason is required" });
+    }
+
+    listing.status = "rejected";
+    listing.rejectionReason = reason;
+    await listing.save();
+
+    // Notify the host (placeholder for notification logic)
+    const host = await User.findById(listing.host);
+    if (host) {
+      console.log(`Notification sent to ${host.email}: Your listing was rejected. Reason: ${reason}`);
+    }
+
+    res.status(200).json({ message: "Listing rejected successfully", listing });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to reject listing", details: error.message });
+  }
+};
+
+module.exports = { 
+  createListing, 
+  getListings, 
+  getListingById, 
+  updateListing, 
+  deleteListing, 
+  approveListing, 
+  rejectListing 
+};

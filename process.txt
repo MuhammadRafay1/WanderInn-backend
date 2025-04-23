@@ -1,0 +1,62 @@
+# Project Setup Log - wanderInn Backend
+
+## Initial Project Setup
+### Step 1: Initialize Node.js Project
+```sh
+npm init -y
+```
+
+### Step 2: Install Dependencies
+```sh
+npm install express mongoose cors dotenv appwrite jsonwebtoken bcryptjs multer
+npm install --save-dev nodemon
+```
+
+### Step 3: Setup Project Structure
+```sh
+mkdir backend
+cd backend
+mkdir config controllers models routes middlewares utils
+touch index.js .env .gitignore
+```
+
+### Step 4: Configure `.gitignore`
+```sh
+echo "node_modules" >> .gitignore
+echo ".env" >> .gitignore
+```
+
+### Step 5: Setup MongoDB Connection
+- Created `config/db.js` for database connection.
+
+### Step 6: Start Server
+```sh
+npm run dev
+```
+
+## Authentication Setup (JWT-based Login/Signup)
+### Step 7: Create User Model
+- Created `models/User.js` with hashed password functionality.
+
+### Step 8: Setup JWT Token Utility
+- Created `utils/generateToken.js` for generating JWT tokens.
+
+### Step 9: Create Authentication Middleware
+- Created `middlewares/authMiddleware.js` to verify JWT tokens.
+
+### Step 10: Setup Authentication Routes
+- Created `routes/authRoutes.js` for user registration and login.
+- Connected routes in `index.js`.
+
+### Step 11: Update Environment Variables
+- Added `JWT_SECRET` to `.env` file.
+
+### Step 12: Run Authentication System
+```sh
+npm run dev
+```
+- Endpoints:
+  - **Register User:** `POST /api/auth/register`
+  - **Login User:** `POST /api/auth/login`
+
+
