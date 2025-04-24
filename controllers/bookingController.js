@@ -151,11 +151,68 @@ const deleteBooking = async (req, res) => {
     }
 };
 
+const getPastBookings = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Fetch past bookings where the check-out date is in the past
+    const pastBookings = await Booking.find({
+      user: userId,
+      checkOut: { $lt: new Date() }, // Check-out date is in the past
+    })
+      .populate("property", "title location price images") // Populate property details
+      .sort({ checkOut: -1 }); // Sort by most recent check-out date
+
+    if (pastBookings.length === 0) {
+      return res.status(404).json({ message: "No past bookings found." });
+    }
+
+    res.status(200).json({ pastBookings });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch past bookings", details: error.message });
+  }
+};
+
+const rebookProperty = async (req, res) => {
+  try {
+    const { propertyId, checkIn, checkOut, guests, paymentMethod } = req.body;
+
+    // Validate required fields
+    if (!propertyId || !checkIn || !checkOut || !guests || !paymentMethod) {
+      return res.status(400).json({ error: "All fields are required for rebooking." });
+    }
+
+    // Check if the property exists
+    const property = await Listing.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({ error: "Property not found." });
+    }
+
+    // Create a new booking
+    const newBooking = new Booking({
+      property: propertyId,
+      user: req.user.id,
+      checkIn,
+      checkOut,
+      guests,
+      totalPrice: property.price * guests, // Calculate total price
+      paymentMethod,
+    });
+
+    await newBooking.save();
+    res.status(201).json({ message: "Property rebooked successfully!", booking: newBooking });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to rebook property", details: error.message });
+  }
+};
+
 module.exports = {
     createBooking,
     getAllBookings,
     getUserBookings,
     getBookingById,
     updateBookingStatus,
-    deleteBooking
+    deleteBooking,
+    getPastBookings,
+    rebookProperty
 };
