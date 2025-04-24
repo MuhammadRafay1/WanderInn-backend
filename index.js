@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const listingRoutes = require("./routes/listingRoutes"); 
 const bookingRoutes = require("./routes/bookingRoutes")
+const reviewRoutes = require("./routes/reviewRoutes");
 const app = express();
 
 // Middleware
@@ -15,6 +16,7 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/bookings", bookingRoutes )
+app.use("/api/reviews", reviewRoutes);
 // Connect Database
 connectDB();
 
