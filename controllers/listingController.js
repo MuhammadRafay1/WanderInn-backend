@@ -223,19 +223,6 @@ const filterPropertiesByAmenities = async (req, res) => {
   }
 };
 
-const getBookingHistory = async (req,res) =>{
-  try{
-    const bookings= await Booking.find({guest: req.user.id})
-    .populate("listing", "title location price images")
-    .sort({createdAt: -1});
-    
-    res.status(200).json({ bookings });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch booking history", details: err.message });
-  }
-};
-
-
 module.exports = { 
   createListing, 
   getListings, 
@@ -244,6 +231,5 @@ module.exports = {
   deleteListing, 
   approveListing, 
   rejectListing,
-  filterPropertiesByAmenities,
-  getBookingHistory
+  filterPropertiesByAmenities 
 };
