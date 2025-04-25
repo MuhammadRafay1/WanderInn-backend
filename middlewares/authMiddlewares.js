@@ -38,4 +38,12 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const host = (req, res, next) => {
+  if (req.user && req.user.role === "host") {
+    next();
+  } else {
+    res.status(403).json({ message: "Access denied, host only" });
+  }
+};
+
+module.exports = { protect, admin,host };
