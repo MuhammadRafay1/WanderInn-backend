@@ -223,7 +223,27 @@ const filterPropertiesByAmenities = async (req, res) => {
   }
 };
 
+const getTrendingDestinations = async (req, res) => {
+  try {
+    console.log("Fetching trending destinations...");
+    const trendingDestinations = await Listing.aggregate([
+      { $match: { status: "approved" } },
+      { $group: { _id: "$location", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 }
+    ]);
+    console.log("Aggregation result:", trendingDestinations);
+
+    return res.status(200).json({ trendingDestinations });
+  } catch (error) {
+    console.error("Error in getTrendingDestinations:", error.stack);
+    res.status(500).json({ error: "Failed to fetch trending destinations", details: error.message });
+  }
+};
+
+
 module.exports = { 
+  getTrendingDestinations,
   createListing, 
   getListings, 
   getListingById, 
@@ -231,5 +251,6 @@ module.exports = {
   deleteListing, 
   approveListing, 
   rejectListing,
-  filterPropertiesByAmenities 
+  filterPropertiesByAmenities
+
 };

@@ -7,13 +7,15 @@ const {
     deleteListing,
     approveListing,
     rejectListing,
-    filterPropertiesByAmenities
+    filterPropertiesByAmenities,
+    getTrendingDestinations
 } = require("../controllers/listingController");
 const { protect, admin } = require("../middlewares/authMiddlewares");
 
 const router = express.Router();
 
 // Public Routes
+router.get("/trending", getTrendingDestinations);
 router.get("/", getListings); 
 router.get("/:id", getListingById); 
 
@@ -28,5 +30,8 @@ router.patch("/:id/reject", protect, admin, rejectListing);
 
 // Route for filtering properties by amenities
 router.get("/filter", filterPropertiesByAmenities);
+
+// Route to fetch trending destinations
+
 
 module.exports = router;
