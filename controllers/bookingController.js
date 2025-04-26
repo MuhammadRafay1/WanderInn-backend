@@ -20,6 +20,7 @@ const createBooking = async (req, res) => {
         if (!listing) {
             return res.status(404).json({ error: "Property not found." });
         }
+        const cancellationPolicy = listing.cancellationPolicy;
 
         // Create new booking
         const newBooking = new Booking({
@@ -34,7 +35,7 @@ const createBooking = async (req, res) => {
         });
 
         await newBooking.save();
-        res.status(201).json({ message: "Booking created successfully!", booking: newBooking });
+        res.status(201).json({ message: "Booking created successfully!", booking: newBooking, cancellationPolicy });
     } catch (error) {
         res.status(500).json({ error: "Failed to create booking", details: error.message });
     }
