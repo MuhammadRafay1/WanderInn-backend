@@ -241,6 +241,23 @@ const getTrendingDestinations = async (req, res) => {
   }
 };
 
+const getHostProperties = async (req, res) => {
+  try {
+    const hostId = req.user.id; // Get the authenticated host's ID
+
+    // Fetch properties where the host matches the authenticated user
+    const properties = await Listing.find({ host: hostId });
+
+    if (!properties.length) {
+      return res.status(404).json({ message: "No properties found for this host." });
+    }
+
+    res.status(200).json({ properties });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch properties", details: error.message });
+  }
+};
+
 
 module.exports = { 
   getTrendingDestinations,
@@ -251,6 +268,7 @@ module.exports = {
   deleteListing, 
   approveListing, 
   rejectListing,
-  filterPropertiesByAmenities
+  filterPropertiesByAmenities,
+  getHostProperties
 
 };
