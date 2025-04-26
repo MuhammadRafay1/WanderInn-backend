@@ -7,6 +7,7 @@ const listingRoutes = require("./routes/listingRoutes");
 const bookingRoutes = require("./routes/bookingRoutes")
 const reviewRoutes = require("./routes/reviewRoutes");
 const hostRoutes = require("./routes/hostRoutes");
+const supportRoutes = require("./routes/supportRoutes");
 const app = express();
 
 // Middleware
@@ -19,6 +20,7 @@ app.use("/api/listings", listingRoutes);
 app.use("/api/bookings", bookingRoutes )
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/hosts",hostRoutes);
+app.use("/api/support", supportRoutes);
 // Connect Database
 connectDB();
 
