@@ -37,7 +37,15 @@ const UserSchema = new mongoose.Schema(
     bookings: {
       type: Number,
       default: 0
-    }
+    },
+    notifications: [
+      {
+        message: { type: String, required: true },
+        bookingId: { type: mongoose.Schema.Types.ObjectId, ref: "Booking" },
+        isRead: { type: Boolean, default: false },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

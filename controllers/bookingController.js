@@ -1,6 +1,8 @@
 const Booking = require("../models/booking");
 const Listing = require("../models/listings");
 const User = require("../models/User");
+const sendEmail = require("../utils/sendEmail"); 
+
 
 // @desc    Create a new booking
 // @route   POST /api/bookings
@@ -35,6 +37,22 @@ const createBooking = async (req, res) => {
         });
 
         await newBooking.save();
+
+        const host = await User.findById(listing.host);
+        if (host) {
+          // Add notification to the host's notifications array
+          host.notifications.push({
+            message: `New booking for your property "${listing.title}" from ${req.user.name}.`,
+            bookingId: newBooking._id,
+          });
+          await host.save();
+    
+          // Send email notification to the host
+          const emailSubject = "New Booking Notification";
+          const emailText = `You have a new booking for your property "${listing.title}" from ${req.user.name}. Check-in: ${checkIn}, Check-out: ${checkOut}.`;
+          await sendEmail(host.email, emailSubject, emailText);
+        }
+
         res.status(201).json({ message: "Booking created successfully!", booking: newBooking, cancellationPolicy });
     } catch (error) {
         res.status(500).json({ error: "Failed to create booking", details: error.message });

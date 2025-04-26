@@ -47,4 +47,41 @@ const getHostEarnings = async (req, res) => {
   }
 };
 
-module.exports = { getHostEarnings };
+const getNotifications = async (req, res) => {
+  try {
+    const host = await User.findById(req.user.id).select("notifications");
+
+    if (!host) {
+      return res.status(404).json({ error: "Host not found." });
+    }
+
+    res.status(200).json({ notifications: host.notifications });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch notifications", details: error.message });
+  }
+};
+
+const markNotificationAsRead = async (req, res) => {
+  try {
+    const { notificationId } = req.params;
+
+    const host = await User.findById(req.user.id);
+    if (!host) {
+      return res.status(404).json({ error: "Host not found." });
+    }
+
+    const notification = host.notifications.id(notificationId);
+    if (!notification) {
+      return res.status(404).json({ error: "Notification not found." });
+    }
+
+    notification.isRead = true;
+    await host.save();
+
+    res.status(200).json({ message: "Notification marked as read." });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to mark notification as read", details: error.message });
+  }
+};
+
+module.exports = {getHostEarnings, getNotifications, markNotificationAsRead };
