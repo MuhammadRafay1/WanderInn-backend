@@ -25,6 +25,7 @@ const bookingSchema = new mongoose.Schema(
       required: true,
       min: 1
     },
+    //checked
     status: {
       type: String,
       enum: ["confirmed", "completed", "cancelled"],
@@ -58,6 +59,7 @@ const bookingSchema = new mongoose.Schema(
     }
   },
   { timestamps: true }
+  //works
 );
 
 // Generate unique confirmation code before saving
